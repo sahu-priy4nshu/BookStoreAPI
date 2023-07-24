@@ -3,6 +3,7 @@ const Book=require('../models/books')
 const auth=require('../middleware/auth')
 const adminAuth = require('../middleware/adminAuth');
 const bookSchema = require('../middleware/npm-joi');
+const validators = require('../middleware/npm-joi');
 const router=new express.Router();
 
 
@@ -17,7 +18,11 @@ router.get('/books',auth,async (req,res)=>{
 
 router.post('/books',adminAuth,async (req,res)=>{
     const book=new Book(req.body)
-    const { error,value } = bookSchema.validate(req.body)
+    const { error,value } = validators.bookSchema.validate(req.body)
+    if(error)
+    {
+        return res.status(400).json({error: error.details[0].message})
+    }
     try{
         await book.save()
         res.status(200).send({message:"Book Added Successfully",book})

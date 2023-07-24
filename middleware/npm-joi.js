@@ -1,5 +1,6 @@
 const Joi = require('joi')
-const registerSchema= Joi.object({
+const validators={
+registerSchema: Joi.object({
 
     email: Joi.string().email().required(),
 
@@ -9,8 +10,8 @@ const registerSchema= Joi.object({
 
     role:  Joi.string()
 
-})
-const loginSchema= Joi.object({
+}),
+loginSchema: Joi.object({
 
     email: Joi.string().email().required(),
 
@@ -18,10 +19,8 @@ const loginSchema= Joi.object({
 
     role:  Joi.string()
 
-})
-const bookSchema = Joi.object({
-
-    email: Joi.string().email().required(),
+}),
+bookSchema: Joi.object({
 
     title: Joi.string().required(),
 
@@ -34,6 +33,5 @@ const bookSchema = Joi.object({
     genre: Joi.string().required()
 
 })
-module.exports=registerSchema
-module.exports=loginSchema
-module.exports=bookSchema
+}
+module.exports=validators

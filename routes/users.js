@@ -5,11 +5,11 @@ const registerSchema=require('../middleware/npm-joi')
 const loginSchema=require('../middleware/npm-joi')
 
 router.post('/auth/register',async(req,res)=>{
-    const { error,value } = registerSchema.validate(req.body)
-    if(error)
-    {
-        return res.status(400).json({error: error.details[0].message})
-    }
+    const { error,value } = validators.registerSchema.validate(req.body)
+    // if(error)
+    // {
+    //     return res.status(400).json({error: error.details[0].message})
+    // }
     try{
         const user= new User(req.body)
         await user.save()
@@ -22,7 +22,7 @@ router.post('/auth/register',async(req,res)=>{
 })
 
 router.post('/auth/login', async (req, res) => {
-    const { error,value } = loginSchema.validate(req.body)
+    const { error,value } = validators.loginSchema.validate(req.body)
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
