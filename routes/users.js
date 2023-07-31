@@ -1,8 +1,7 @@
 const express=require('express');
 const User=require('../models/users')
 const router= new express.Router()
-const registerSchema=require('../middleware/npm-joi')
-const loginSchema=require('../middleware/npm-joi')
+const validators=require('../middleware/npm-joi')
 
 router.post('/auth/register',async(req,res)=>{
     const { error,value } = validators.registerSchema.validate(req.body)
