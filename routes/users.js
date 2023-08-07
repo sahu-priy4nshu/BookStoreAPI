@@ -2,7 +2,11 @@ const express=require('express');
 const User=require('../models/users')
 const router= new express.Router()
 const validators=require('../middleware/npm-joi')
+const sentry = require('@sentry/node')
 
+router.get('/homepage', (req,res)=>{
+    res.sendFile('/Users/priyanshu.sahu/Downloads/BookStoreAPI/frontend/index.html')
+})
 router.post('/auth/register',async(req,res)=>{
     const { error,value } = validators.registerSchema.validate(req.body)
     // if(error)
@@ -21,6 +25,7 @@ router.post('/auth/register',async(req,res)=>{
 })
 
 router.post('/auth/login', async (req, res) => {
+    console.log("in users " , req.body)
     const { error,value } = validators.loginSchema.validate(req.body)
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)

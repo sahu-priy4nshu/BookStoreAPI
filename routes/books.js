@@ -6,7 +6,20 @@ const adminAuth = require('../middleware/adminAuth');
 const validators = require('../middleware/npm-joi');
 const router=new express.Router();
 const axios = require('axios');
+const sentry = require('@sentry/node')
 
+sentry.init({
+    dsn: "https://3b55aafdc6804d0b948ae2478917bccb@o201295.ingest.sentry.io/4505602112356352",
+    tracesSampleRate: 1.0,
+    serverName: "Priyanshu_BookStore"
+})
+
+router.use(sentry.Handlers.requestHandler());
+router.use(sentry.Handlers.errorHandler());
+
+// router.get('/homepage', (req, res)=>{
+//     res.sendFile('/Users/priyanshu.sahu/Downloads/BookStoreAPI/frontend/index.html')
+// })
 
 router.get('/books',auth,async (req,res)=>{
     try{
@@ -89,16 +102,20 @@ router.get('/books/buy/:id',auth,async(req,res) => {
                             "currency": req.body.currency,
                             "amount": req.body.amount
                             };
-
                     try {
-                        const response = await axios.post(url, dataToSend); // Use axios.post for a POST request, or axios.put for a PUT request, etc.
+                        const response = await axios.post(url, dataToSend).catch((error) =>{
+                            throw error
+                        })
                         const responseData = response.data;
                         console.log(responseData)
                         await bookData.save()
                         // Process the response data as needed
                         res.status(200).send(responseData)
                     } catch (error) {
-                        res.status(404).send(error)
+                        sentry.captureException(error)
+                        res.status(404).send("Something Went Wrong During the Payment.")
+                        logger.info("Something Went Wrong During the Payment.")
+
                     }
             }
 
@@ -107,7 +124,7 @@ router.get('/books/buy/:id',auth,async(req,res) => {
 }
 catch (e){
     res.status(404).send({e : e.message})
-
+    sentry.captureException(e)
 }
 
 })
